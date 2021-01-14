@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  newsAPIKey: "j4Qu8iCMgRsFHvj_NYi4y7jB57kTRvMg",
+  newsAPIBaseUrl: "https://api.polygon.io/v1/meta/symbols",
 };
 
 /*
