@@ -1,0 +1,20 @@
+.topic {
+  .heading {
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+}
+.line-grey {
+  background-color: #e1e3ea;
+
+  margin-top: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.bb-dash {
+  border-bottom: 2px dashed grey;
+}
+
+.active {
+  border-bottom: 2px solid black;
+}
