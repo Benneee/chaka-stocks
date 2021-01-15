@@ -8,14 +8,18 @@
   </div>
 
   <div
-    class="row"
+    class="row mb-3"
     *ngFor="
       let news of newsArticles | paginate: { itemsPerPage: 10, currentPage: p }
     "
   >
     <div class="col-md-3">
       <div class="card border-0">
-        <img [src]="news?.image" class="img-fluid" [alt]="news?.title" />
+        <img
+          src="../../assets/images/mkts.jpg"
+          class="img-fluid"
+          [alt]="news?.title"
+        />
       </div>
     </div>
     <div class="col-md-9 align-self-center">
