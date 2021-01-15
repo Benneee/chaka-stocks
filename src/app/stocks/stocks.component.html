@@ -1,1 +1,355 @@
-<p>stocks works!</p>
+<app-loader [isLoading]="isLoading"></app-loader>
+<div class="container-fluid" *ngIf="coyProfile !== null || !isLoading">
+  <div class="row">
+    <div class="col-md-6">
+      <p class="font-weight-bold mb-0">
+        {{ coyProfile?.Name }} ({{ coyProfile?.Symbol }})
+      </p>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="d-md-flex">
+            <h2 class="font-weight-bold">
+              {{ coyPrice }}
+            </h2>
+            &nbsp;
+            <span class="text-success align-self-end mb-2"
+              >+{{ coyChange }}</span
+            >
+            &nbsp;
+            <span class="text-success align-self-end mb-2"
+              >(+{{ coyChangePercent }})</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 text-md-right">
+      <span><i class="text-primary fa fa-star-o fa-2x"></i> </span>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-md-6"></div>
+    <div class="col-md-6 text-md-right">
+      <div class="topic">
+        <p class="heading text-capitalize mb-0">Previous Close</p>
+        <p>{{ coyPreviousClose }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid" [hidden]="isLoading || !stocksDataChart">
+  <div class="row">
+    <div class="bb-dash col-md-12 mb-4">
+      <canvas style="height: 250px; width: 100%; padding: 0.35rem" #stocksChart>
+        {{ stocksDataChart }}
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" *ngIf="!isLoading && stocksDataChart">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card p-2">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-6">
+                <div class="d-flex justify-content-md-around">
+                  <span
+                    (click)="getStocksReportForIntraDay(intraDay)"
+                    [ngClass]="{ active: currentChart == 'intraDay' }"
+                    class="p-1 pointer"
+                    >1D</span
+                  >
+                  <span
+                    (click)="getStocksReportForThirtyDays(daily)"
+                    [ngClass]="{ active: currentChart == 'thirty-days' }"
+                    class="p-1 pointer"
+                    >1M</span
+                  >
+                  <span
+                    (click)="getStocksReportForThreeMonths(monthly)"
+                    [ngClass]="{ active: currentChart == 'three-monthly' }"
+                    class="p-1 pointer"
+                    >3M</span
+                  >
+                  <span
+                    (click)="getStocksReportForSixMonths(monthly)"
+                    [ngClass]="{ active: currentChart == 'six-monthly' }"
+                    class="p-1 pointer"
+                    >6M</span
+                  >
+                  <span class="p-1">YTD</span>
+                  <span
+                    (click)="getStocksReportForTwelveMonths(monthly)"
+                    [ngClass]="{ active: currentChart == 'twelve-monthly' }"
+                    class="p-1 pointer"
+                    >1Y</span
+                  >
+                  <span
+                    (click)="getStocksReportForTwoYears(monthly)"
+                    [ngClass]="{ active: currentChart == 'two-yearly' }"
+                    class="p-1 pointer"
+                    >2Y</span
+                  >
+
+                  <span
+                    (click)="getStocksReportForFiveYears(monthly)"
+                    [ngClass]="{ active: currentChart == 'five-yearly' }"
+                    class="p-1 pointer"
+                    >5Y</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 text-md-right mt-md-0 mt-2">
+            <div class="">
+              <input type="checkbox" id="peers" name="peers" />
+              <label for="peers" class="mr-3">Peers</label>
+
+              <span (click)="getCSVData()" class="pointer"
+                ><i class="fa fa-download"></i>CSV</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" *ngIf="coyProfile !== null">
+  <div class="row py-3 mt-3">
+    <div class="col-md-12 mb-2">
+      <h4 class="font-weight-bold">Profile</h4>
+    </div>
+
+    <div class="col-md-6 profile">
+      <div class="row">
+        <div class="col-md-12">
+          <!-- <p class="font-weight-bold mb-0">
+            {{ coyProfile?.Name }} ({{ coyProfile?.Symbol }})
+          </p> -->
+        </div>
+        <div class="col-md-12">
+          <hr class="line-grey" />
+        </div>
+        <div class="col-md-6">
+          <div class="topic mb-4">
+            <p class="mb-1 heading">exchange</p>
+            <p class="font-weight-bold">{{ coyProfile?.Exchange }}</p>
+          </div>
+
+          <div class="topic mb-4">
+            <p class="mb-1 heading">float</p>
+            <p class="font-weight-bold">{{ coyProfile?.SharesFloat }}</p>
+          </div>
+
+          <div class="topic mb-4">
+            <p class="mb-1 heading">sector</p>
+            <p class="font-weight-bold">{{ coyProfile?.Sector }}</p>
+          </div>
+
+          <div class="topic mb-4">
+            <p class="mb-1 heading">Website</p>
+            <a class="text-primary font-weight-bold" (click)="openInNewTab()">
+              https://bionanogenomics.com
+            </a>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="topic mb-4">
+            <p class="mb-1 heading">Number of employees</p>
+            <p class="font-weight-bold">{{ coyProfile?.FullTimeEmployees }}</p>
+          </div>
+
+          <div class="topic mb-4">
+            <p class="mb-1 heading">Shares Outstanding</p>
+            <p class="font-weight-bold">
+              {{ coyProfile?.SharesOutstanding | shortNumber }}
+            </p>
+          </div>
+
+          <div class="topic mb-4">
+            <p class="mb-1 heading">Industry</p>
+            <p class="font-weight-bold">{{ coyProfile?.Industry }}</p>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="topic">
+            <p class="mb-1 heading">Tags</p>
+            <div *ngIf="coyProfile?.tags">
+              <span
+                *ngFor="let item of coyProfile?.tags"
+                class="font-weight-bold badge badge-light text-dark text-uppercase"
+              >
+                {{ item }}
+              </span>
+            </div>
+
+            <div *ngIf="!coyProfile?.tags">...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-12">
+          <hr class="line-grey" />
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">volume</p>
+            <p class="font-weight-bold">
+              {{ coyVolume }}
+            </p>
+            <ng-template #noValue> ... </ng-template>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">AVG daily volume</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.AVGDailyVolume; else noValue"
+            >
+              {{ coyProfile?.AVGDailyVolume }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Open</p>
+            <p class="font-weight-bold">{{ coyOpen }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">52 week range</p>
+            <p class="font-weight-bold">
+              {{ coyProfile["52WeekHigh"] }} - {{ coyProfile["52WeekLow"] }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">market cap</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.MarketCapitalization; else noValue"
+            >
+              {{ coyProfile?.MarketCapitalization | shortNumber }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">previous close</p>
+            <p class="font-weight-bold">
+              {{ coyPreviousClose }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Beta</p>
+            <p class="font-weight-bold">
+              {{ coyProfile?.Beta }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Latest quarterly eps</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.LatestQuarterlyEPS; else noValue"
+            >
+              {{ coyProfile?.LatestQuarterlyEPS }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Latest eps quarter</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.LatestEPSQuarter; else noValue"
+            >
+              {{ coyProfile?.LatestEPSQuarter }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Dividend & yield</p>
+            <p class="font-weight-bold">
+              {{ coyProfile?.DividendYield }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Latest quarterly eps</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.ExDividendDate; else noValue"
+            >
+              {{ coyProfile?.ExDividendDate }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">Latest eps quarter</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.PERatio; else noValue"
+            >
+              {{ coyProfile?.PERatio }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">iex volume</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.IEXVolume; else noValue"
+            >
+              {{ coyProfile?.IEXVolume }}
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="topic">
+            <p class="mb-1 heading">iex mkt share</p>
+            <p
+              class="font-weight-bold"
+              *ngIf="coyProfile?.IEXMarketShare; else noValue"
+            >
+              {{ coyProfile?.IEXMarketShare }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

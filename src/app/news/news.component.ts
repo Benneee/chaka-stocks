@@ -1,5 +1,6 @@
 import { NewsItem, NewsService } from "./../../services/news/news.service";
 import { Component, OnInit } from "@angular/core";
+import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "app-news",
@@ -9,6 +10,7 @@ import { Component, OnInit } from "@angular/core";
 export class NewsComponent implements OnInit {
   isLoading = false;
   newsArticles: NewsItem[];
+  dummyImg = "assets/images/inv-obs.jpg";
 
   p = 1;
   constructor(private newsService: NewsService) {}
@@ -20,17 +22,24 @@ export class NewsComponent implements OnInit {
   getStockNews() {
     this.isLoading = true;
     const news$ = this.newsService.getNews();
-    news$.subscribe(
-      (res: any) => {
-        if (res) {
-          this.newsArticles = res;
+    news$
+      .pipe(
+        finalize(() => {
           this.isLoading = false;
-        } else {
-          console.log("error: ", res);
+        })
+      )
+      .subscribe(
+        (res: any) => {
+          if (res) {
+            this.newsArticles = res;
+          } else {
+            console.log("error: ", res);
+          }
+        },
+        (error) => {
+          console.log("error: ", error);
         }
-      },
-      (error) => console.log("error: ", error)
-    );
+      );
   }
 
   visitArticle(news: NewsItem) {

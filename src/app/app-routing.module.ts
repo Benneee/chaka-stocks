@@ -6,7 +6,7 @@ import { NewsComponent } from "./news/news.component";
 const routes: Routes = [
   {
     path: "",
-    redirectTo: "news",
+    redirectTo: "stocks",
     pathMatch: "full",
   },
   {
